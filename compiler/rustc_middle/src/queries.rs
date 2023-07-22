@@ -97,7 +97,7 @@ use crate::middle::resolve_bound_vars::{ObjectLifetimeDefault, ResolveBoundVars,
 use crate::middle::stability::DeprecationEntry;
 use crate::mir::interpret::{
     EvalStaticInitializerRawResult, EvalToAllocationRawResult, EvalToConstValueResult,
-    EvalToValTreeResult, GlobalId,
+    EvalToValTreeResult,
 };
 use crate::mono::{
     CodegenUnit, CollectionMode, MonoItem, MonoItemPartitions, NormalizationErrorInMono,
@@ -1339,12 +1339,9 @@ rustc_queries! {
     /// [`Self::eval_to_valtree`] instead.
     ///
     /// </div>
-    query eval_to_allocation_raw(key: ty::PseudoCanonicalInput<'tcx, GlobalId<'tcx>>)
+    query eval_to_allocation_raw(key: ty::PseudoCanonicalInput<'tcx, ty::Instance<'tcx>>)
         -> EvalToAllocationRawResult<'tcx> {
-        desc {
-            "const-evaluating + checking `{}`",
-            key.value.display(tcx)
-        }
+        desc { "const-evaluating + checking `{}`", key.value }
         cache_on_disk
     }
 
@@ -1371,12 +1368,9 @@ rustc_queries! {
     /// </div>
     ///
     /// [^1]: Such as enum variant explicit discriminants or array lengths.
-    query eval_to_const_value_raw(key: ty::PseudoCanonicalInput<'tcx, GlobalId<'tcx>>)
+    query eval_to_const_value_raw(key: ty::PseudoCanonicalInput<'tcx, ty::Instance<'tcx>>)
         -> EvalToConstValueResult<'tcx> {
-        desc {
-            "simplifying constant for the type system `{}`",
-            key.value.display(tcx)
-        }
+        desc { "simplifying constant for the type system `{}`", key.value }
         depth_limit
         cache_on_disk
     }
@@ -1384,7 +1378,7 @@ rustc_queries! {
     /// Evaluate a constant and convert it to a type level constant or
     /// return `None` if that is not possible.
     query eval_to_valtree(
-        key: ty::PseudoCanonicalInput<'tcx, GlobalId<'tcx>>
+        key: ty::PseudoCanonicalInput<'tcx, ty::Instance<'tcx>>
     ) -> EvalToValTreeResult<'tcx> {
         desc { "evaluating type-level constant" }
     }
